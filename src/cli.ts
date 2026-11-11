@@ -6,6 +6,7 @@ import {
   runFactCheck,
 } from "./factcheck/verifier.ts";
 import { generateMonorepoDocs } from "./generators/docs-gen.ts";
+import { syncKernelStoryMdx } from "./generators/kernel-crawler.ts";
 import { generateWorkspaceSkills } from "./generators/skills-gen.ts";
 import { getKnowledgeEngineStatus, runKnowledgeMcpStdio } from "./mcp/stdio.ts";
 import { runDeepResearch } from "./research/deep-research.ts";
@@ -170,6 +171,16 @@ export async function runCli(argv = process.argv.slice(2)): Promise<number> {
         `  ${sk.name.padEnd(28)} discovery=${sk.discoveryTokens}t full=${sk.fullActivationTokens}t savings=${sk.progressiveSavingsPct}% -> ${sk.skillMdPath}\n`,
       );
     }
+    return 0;
+  }
+
+  if (cmd === "crawl-kernel") {
+    const res = await syncKernelStoryMdx({
+      offline: rest.includes("--offline"),
+    });
+    process.stdout.write(
+      `[ske:crawl-kernel] latest_stable=${res.latestStable} wrote=${res.targetFile}\n`,
+    );
     return 0;
   }
 

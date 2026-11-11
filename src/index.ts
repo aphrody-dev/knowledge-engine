@@ -70,6 +70,16 @@ export {
 } from "./generators/skills-gen.ts";
 
 export {
+  DISTRO_PIPELINES,
+  fetchLiveKernelData,
+  generateLiveUpstreamMdx,
+  syncKernelStoryMdx,
+  type DistroBuildPipeline,
+  type KernelRelease,
+  type UpstreamKernelFeed,
+} from "./generators/kernel-crawler.ts";
+
+export {
   auditAllAgySessions,
   parseSingleSession,
   runContinuousWatchLoop,
