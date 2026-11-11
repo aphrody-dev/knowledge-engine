@@ -44,11 +44,11 @@ describe("@aphrody/knowledge-engine core verification", () => {
 
   test("Redacts OAuth ya29, refresh 1//, GitHub, OpenAI, and Context7 tokens with zero leaks", () => {
     const raw =
-      'access="ya29.a0AehfTOnU5XCy1VLJZmk4PgqsfLUWkdfu7GZqOxR3" refresh="1//03w0O-5KoOP92CgYIARAAGAMSNwF-L9Ir45nbFHhL" ctx="ctx7sk-1234567890abcdef1234"';
+      'access="ya29.SYNTHETIC_OAUTH_FIXTURE_TOKEN_1234567890ABCDEF" refresh="1//03SYNTHETIC_REFRESH_FIXTURE_TOKEN_1234567890" ctx="ctx7sk-synthetic_fixture_123456"';
     const clean = redactSecretsFromText(raw);
-    expect(clean).not.toContain("ya29.a0Aehf");
-    expect(clean).not.toContain("1//03w0O");
-    expect(clean).not.toContain("ctx7sk-123456");
+    expect(clean).not.toContain("ya29.SYNTHETIC");
+    expect(clean).not.toContain("1//03SYNTHETIC");
+    expect(clean).not.toContain("ctx7sk-synthetic");
     expect(scanTextForSecretLeaks(clean).length).toBe(0);
     expect(scanTextForSecretLeaks(raw).length).toBeGreaterThanOrEqual(3);
   });

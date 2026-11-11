@@ -13,7 +13,7 @@ import { redactSecretsFromText, stripEmojis } from "../env/safe-env.ts";
 import { blake3Hex } from "../ffi/blake3.ts";
 
 export interface WorkspaceEntityRecord {
-  group: "apps" | "packages" | "crates" | "infra" | "third_party";
+  group: "apps" | "packages" | "crates" | "infra" | "tools" | "third_party";
   name: string;
   absPath: string;
   language: string;
@@ -226,7 +226,7 @@ function inspectEntityDir(
     try {
       const rawCargo = readFileSync(cargoTomlPath, "utf8");
       const verMatch = rawCargo.match(/^version\s*=\s*"([^"]+)"/m);
-      if (verMatch?.[1]) version = verMatch[1];
+      if (verMatch?.[1] && verMatch[1] !== "0.0.0") version = verMatch[1];
       const descMatch = rawCargo.match(/^description\s*=\s*"([^"]+)"/m);
       if (!description && descMatch?.[1]) description = descMatch[1];
 
@@ -310,6 +310,7 @@ function captureSampleCliHelps(
   localBinDir: string,
 ): Array<{ binary: string; summaryLine: string }> {
   const probeTargets = [
+    "archguard.exe",
     "ske.exe",
     "triad.exe",
     "rust-stack.exe",
@@ -364,7 +365,7 @@ export async function generateMonorepoDocs(
 
   const entities: WorkspaceEntityRecord[] = [];
 
-  for (const group of ["apps", "packages", "crates", "third_party"] as const) {
+  for (const group of ["apps", "packages", "crates", "tools", "third_party"] as const) {
     const groupDir = join(srcRoot, group);
     if (!existsSync(groupDir)) continue;
     for (const entry of readdirSync(groupDir, { withFileTypes: true })) {
@@ -492,10 +493,14 @@ export async function generateMonorepoDocs(
       "4. Go 1.27 One-Click Deploy & Polyglot FFI (`C:\\src\\infra`)",
     ),
     renderGroupTable(
-      "third_party",
-      "5. Vendor & Upstream Ecosystem Mirrors (`C:\\src\\third_party\\*`)",
+      "tools",
+      "5. Sovereign Architecture & Verification Tools (`C:\\src\\tools\\*`)",
     ),
-    "## 6. Native C-ABI Shared Libraries & FFI Surface (`~/.local/bin/*.dll`)",
+    renderGroupTable(
+      "third_party",
+      "6. Vendor & Upstream Ecosystem Mirrors (`C:\\src\\third_party\\*`)",
+    ),
+    "## 7. Native C-ABI Shared Libraries & FFI Surface (`~/.local/bin/*.dll`)",
     "",
     "| DLL Binary | Size (KB) | Path |",
     "| :--- | :--- | :--- |",
@@ -504,7 +509,7 @@ export async function generateMonorepoDocs(
         `| \`${d.name}\` | ${(d.sizeBytes / 1024).toFixed(1)} KB | [\`${d.name}\`](file:///${join(localBinDir, d.name).replace(/\\/g, "/")}) |`,
     ),
     "",
-    "## 7. Verified CLI `--help` Probes & Sovereign Port Map",
+    "## 8. Verified CLI `--help` Probes & Sovereign Port Map",
     "",
     "| Port | Subsystem | Protocol Surface |",
     "| :--- | :--- | :--- |",
