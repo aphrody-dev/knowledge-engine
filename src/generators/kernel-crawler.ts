@@ -51,8 +51,7 @@ export const DISTRO_PIPELINES: readonly DistroBuildPipeline[] = [
     kernel_config_target:
       "arch/x86/configs/arch_defconfig with CONFIG_HZ_1000=y, EEVDF + BORE",
     packaging_format: "pkg.tar.zst (Zstandard multi-threaded)",
-    realtime_deploy_mechanism:
-      "pacman -Syu -> mkinitcpio -> systemd-boot UKI",
+    realtime_deploy_mechanism: "pacman -Syu -> mkinitcpio -> systemd-boot UKI",
   },
   {
     distro: "Debian / Ubuntu Enterprise",
@@ -101,8 +100,7 @@ export const DISTRO_PIPELINES: readonly DistroBuildPipeline[] = [
     patch_workflow: "apk patch stack targeting minimal container VMs",
     kernel_config_target: "x86_64.config (<10MB vmlinuz)",
     packaging_format: "linux-lts-*.apk (tar + gzip/zstd)",
-    realtime_deploy_mechanism:
-      "apk add --upgrade linux-lts -> update-extlinux",
+    realtime_deploy_mechanism: "apk add --upgrade linux-lts -> update-extlinux",
   },
   {
     distro: "Android / AOSP (Generic Kernel Image - GKI)",
@@ -113,7 +111,8 @@ export const DISTRO_PIPELINES: readonly DistroBuildPipeline[] = [
     patch_workflow: "AOSP Gerrit topic merges + GKI KMI ABI freeze",
     kernel_config_target: "gki_defconfig with CONFIG_ANDROID_BINDER_IPC=y",
     packaging_format: "boot.img / vendor_boot.img",
-    realtime_deploy_mechanism: "Dynamic Partitions OTA -> A/B seamless slot swap",
+    realtime_deploy_mechanism:
+      "Dynamic Partitions OTA -> A/B seamless slot swap",
   },
 ];
 
@@ -183,7 +182,9 @@ export async function fetchLiveKernelData(options?: {
   }
 
   const cached = db
-    .query(`SELECT payload_json FROM kernel_feed_cache WHERE key = 'releases.json'`)
+    .query(
+      `SELECT payload_json FROM kernel_feed_cache WHERE key = 'releases.json'`,
+    )
     .get() as { payload_json: string } | null;
   if (cached?.payload_json) {
     try {
@@ -267,8 +268,7 @@ export async function syncKernelStoryMdx(options?: {
     dbPath: options?.dbPath,
   });
   const mdxOutput = generateLiveUpstreamMdx(feed);
-  const targetDir =
-    options?.targetDir ?? "C:/src/docs/linux-kernel-story/mdx";
+  const targetDir = options?.targetDir ?? "C:/src/docs/linux-kernel-story/mdx";
   if (!existsSync(targetDir)) {
     mkdirSync(targetDir, { recursive: true });
   }

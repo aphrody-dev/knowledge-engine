@@ -365,7 +365,13 @@ export async function generateMonorepoDocs(
 
   const entities: WorkspaceEntityRecord[] = [];
 
-  for (const group of ["apps", "packages", "crates", "tools", "third_party"] as const) {
+  for (const group of [
+    "apps",
+    "packages",
+    "crates",
+    "tools",
+    "third_party",
+  ] as const) {
     const groupDir = join(srcRoot, group);
     if (!existsSync(groupDir)) continue;
     for (const entry of readdirSync(groupDir, { withFileTypes: true })) {
